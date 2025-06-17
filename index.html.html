@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MathZone - Programación Web</title>
+  <style>
+    /* Estilos generales */
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #0f0f0f;
+      color: #ffffff;
+    }
+
+    /* Encabezado */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #1a1a1a;
+      padding: 1rem 2rem;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #00bcd4;
+    }
+
+    nav a {
+      margin: 0 1rem;
+      text-decoration: none;
+      color: #ffffff;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #00bcd4;
+    }
+
+    .search-bar input {
+      padding: 0.5rem;
+      border: none;
+      border-radius: 4px;
+    }
+
+    /* Contenido principal */
+    main {
+      padding: 2rem;
+      max-width: 800px;
+      margin: auto;
+    }
+
+    h1, h2 {
+      color: #00bcd4;
+    }
+
+    /* Formulario */
+    form {
+      background-color: #1a1a1a;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    form label {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    form select, form input {
+      width: 100%;
+      padding: 0.5rem;
+      margin: 0.5rem 0;
+      border: none;
+      border-radius: 4px;
+    }
+
+    form button {
+      background-color: #00bcd4;
+      color: #ffffff;
+      border: none;
+      padding: 0.7rem 1.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    form button:hover {
+      background-color: #0097a7;
+    }
+
+    /* Resultados */
+    .result-container {
+      background-color: #1a1a1a;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+    }
+
+    .result-title {
+      color: #00bcd4;
+      margin-top: 0;
+    }
+
+    /* Tabla de multiplicar */
+    .multiplication-table {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .multiplication-item {
+      background-color: #2c2c2c;
+      padding: 0.5rem;
+      text-align: center;
+      border-radius: 4px;
+    }
+
+    /* Pie de página */
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background-color: #1a1a1a;
+      color: #777777;
+      margin-top: 2rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      nav {
+        margin-top: 1rem;
+      }
+
+      .search-bar {
+        margin-top: 1rem;
+        width: 100%;
+      }
+
+      .search-bar input {
+        width: 100%;
+      }
+      
+      .multiplication-table {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">🧮 MathZone - Calculadora</div>
+    <nav>
+      <a href="#inicio">Inicio</a>
+      <a href="#sobre-mi">Sobre mí</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
+    <div class="search-bar">
+      <input type="text" placeholder="Buscar operaciones..." />
+    </div>
+  </header>
+
+  <main>
+    <h1>Operaciones Matemáticas</h1>
+    <form id="formOperaciones">
+      <div class="form-group">
+        <label for="operacion">Selecciona una operación:</label>
+        <select id="operacion" required>
+          <option value="">-- Selecciona --</option>
+          <option value="edad">Calcular edad exacta</option>
+          <option value="factorial">Factorial de un número</option>
+          <option value="tabla">Tabla de multiplicar</option>
+          <option value="modulo">Módulo de un número</option>
+        </select>
+      </div>
+      
+      <div id="inputContainer">
+        <!-- Los campos específicos se agregarán aquí dinámicamente -->
+      </div>
+      
+      <button type="submit">Calcular</button>
+    </form>
+
+    <div id="resultContainer" class="result-container" style="display: none;">
+      <h2 class="result-title">Resultado</h2>
+      <div id="resultContent"></div>
+    </div>
+  </main>
+
+  <footer>
+    © 2025 MathZone Andres - Progrmación Web
+  </footer>
+
+  <script>
+    const form = document.getElementById('formOperaciones');
+    const operacionSelect = document.getElementById('operacion');
+    const inputContainer = document.getElementById('inputContainer');
+    const resultContainer = document.getElementById('resultContainer');
+    const resultContent = document.getElementById('resultContent');
+
+    // Cambiar los campos de entrada según la operación seleccionada
+    operacionSelect.addEventListener('change', function() {
+      const operacion = this.value;
+      inputContainer.innerHTML = '';
+      resultContainer.style.display = 'none';
+
+      if (operacion === 'edad') {
+        inputContainer.innerHTML = `
+          <div class="form-group">
+            <label for="diaNacimiento">Día de nacimiento:</label>
+            <input type="number" id="diaNacimiento" required min="1" max="31" />
+          </div>
+          <div class="form-group">
+            <label for="mesNacimiento">Mes de nacimiento (1-12):</label>
+            <input type="number" id="mesNacimiento" required min="1" max="12" />
+          </div>
+          <div class="form-group">
+            <label for="anoNacimiento">Año de nacimiento:</label>
+            <input type="number" id="anoNacimiento" required min="1900" max="2100" />
+          </div>
+          <div class="form-group">
+            <label for="diaActual">Día actual:</label>
+            <input type="number" id="diaActual" required min="1" max="31" />
+          </div>
+          <div class="form-group">
+            <label for="mesActual">Mes actual (1-12):</label>
+            <input type="number" id="mesActual" required min="1" max="12" />
+          </div>
+          <div class="form-group">
+            <label for="anoActual">Año actual:</label>
+            <input type="number" id="anoActual" required min="1900" max="2100" />
+          </div>
+        `;
+      } else if (operacion === 'factorial') {
+        inputContainer.innerHTML = `
+          <div class="form-group">
+            <label for="numeroFactorial">Número para calcular factorial:</label>
+            <input type="number" id="numeroFactorial" required min="0" max="100" />
+          </div>
+        `;
+      } else if (operacion === 'tabla') {
+        inputContainer.innerHTML = `
+          <div class="form-group">
+            <label for="numeroTabla">Número base:</label>
+            <input type="number" id="numeroTabla" required min="1" max="100" />
+          </div>
+          <div class="form-group">
+            <label for="limiteTabla">Hasta qué número multiplicar:</label>
+            <input type="number" id="limiteTabla" required min="1" max="100" value="10" />
+          </div>
+        `;
+      } else if (operacion === 'modulo') {
+        inputContainer.innerHTML = `
+          <div class="form-group">
+            <label for="numeroModulo">Número:</label>
+            <input type="number" id="numeroModulo" required />
+          </div>
+          <div class="form-group">
+            <label for="divisorModulo">Divisor:</label>
+            <input type="number" id="divisorModulo" required min="1" />
+          </div>
+        `;
+      }
+    });
+
+    // Procesar el formulario
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const operacion = operacionSelect.value;
+      
+      if (!operacion) {
+        alert('Por favor, selecciona una operación.');
+        return;
+      }
+      
+      try {
+        if (operacion === 'edad') {
+          calcularEdadExacta();
+        } else if (operacion === 'factorial') {
+          calcularFactorial();
+        } else if (operacion === 'tabla') {
+          generarTablaMultiplicar();
+        } else if (operacion === 'modulo') {
+          calcularModulo();
+        }
+        
+        resultContainer.style.display = 'block';
+      } catch (error) {
+        alert('Error: ' + error.message);
+      }
+    });
+
+    // Funciones de cálculo
+    function calcularEdadExacta() {
+      const diaNacimiento = parseInt(document.getElementById('diaNacimiento').value);
+      const mesNacimiento = parseInt(document.getElementById('mesNacimiento').value);
+      const anoNacimiento = parseInt(document.getElementById('anoNacimiento').value);
+      const diaActual = parseInt(document.getElementById('diaActual').value);
+      const mesActual = parseInt(document.getElementById('mesActual').value);
+      const anoActual = parseInt(document.getElementById('anoActual').value);
+      
+      // Validaciones
+      if (anoNacimiento > anoActual) {
+        throw new Error('El año de nacimiento no puede ser mayor al año actual');
+      }
+      
+      if (mesNacimiento < 1 || mesNacimiento > 12 || mesActual < 1 || mesActual > 12) {
+        throw new Error('El mes debe estar entre 1 y 12');
+      }
+      
+      if (diaNacimiento < 1 || diaNacimiento > 31 || diaActual < 1 || diaActual > 31) {
+        throw new Error('Día inválido');
+      }
+      
+      let edad = anoActual - anoNacimiento;
+      
+      // Ajustar edad si no ha pasado el mes de cumpleaños
+      if (mesActual < mesNacimiento || (mesActual === mesNacimiento && diaActual < diaNacimiento)) {
+        edad--;
+      }
+      
+      // Calcular meses restantes
+      let meses = mesActual - mesNacimiento;
+      if (meses < 0) {
+        meses += 12;
+      }
+      if (diaActual < diaNacimiento) {
+        meses--;
+        if (meses < 0) {
+          meses += 12;
+        }
+      }
+      
+      // Calcular días restantes
+      let dias = diaActual - diaNacimiento;
+      if (dias < 0) {
+        const ultimoDiaMesAnterior = new Date(anoActual, mesActual - 1, 0).getDate();
+        dias += ultimoDiaMesAnterior;
+      }
+      
+      resultContent.innerHTML = `
+        <p>Fecha de nacimiento: ${diaNacimiento}/${mesNacimiento}/${anoNacimiento}</p>
+        <p>Fecha actual: ${diaActual}/${mesActual}/${anoActual}</p>
+        <p>Edad exacta: ${edad} años, ${meses} meses y ${dias} días</p>
+      `;
+    }
+
+    function calcularFactorial() {
+      const num = parseInt(document.getElementById('numeroFactorial').value);
+      
+      if (num < 0) {
+        throw new Error('El factorial no está definido para números negativos');
+      }
+      
+      let factorial = 1;
+      let proceso = '';
+      
+      for (let i = 1; i <= num; i++) {
+        factorial *= i;
+        proceso += i === num ? `${i}` : `${i} × `;
+      }
+      
+      resultContent.innerHTML = `
+        <p>El factorial de ${num} es: ${proceso} = ${factorial}</p>
+      `;
+    }
+
+    function generarTablaMultiplicar() {
+      const num = parseInt(document.getElementById('numeroTabla').value);
+      const limite = parseInt(document.getElementById('limiteTabla').value);
+      
+      if (limite < 1) {
+        throw new Error('El límite debe ser mayor a 0');
+      }
+      
+      let tablaHTML = '<div class="multiplication-table">';
+      
+      for (let i = 1; i <= limite; i++) {
+        tablaHTML += `
+          <div class="multiplication-item">
+            ${num} × ${i} = ${num * i}
+          </div>
+        `;
+      }
+      
+      tablaHTML += '</div>';
+      resultContent.innerHTML = `
+        <p>Tabla de multiplicar del ${num} hasta ${limite}:</p>
+        ${tablaHTML}
+      `;
+    }
+
+    function calcularModulo() {
+      const num = parseFloat(document.getElementById('numeroModulo').value);
+      const divisor = parseFloat(document.getElementById('divisorModulo').value);
+      
+      if (divisor === 0) {
+        throw new Error('El divisor no puede ser cero');
+      }
+      
+      const modulo = num % divisor;
+      resultContent.innerHTML = `
+        <p>El módulo de ${num} dividido por ${divisor} es: ${modulo}</p>
+        <p>${num} % ${divisor} = ${modulo}</p>
+      `;
+    }
+  </script>
+
+</body>
+</html>
